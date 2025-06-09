@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Helaas, je bent verloren</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="screen active">
+    <h1>😢 Je zit vast...</h1>
+    <p>Het mysterie was te lastig. Je bent opgesloten in het kasteel.</p>
+    <button onclick="goHome()">Probeer Opnieuw</button>
+  </div>
+ 
+  <script>
+    function goHome() {
+      window.location.href = "index.php";
+    }
+  </script>
+</body>
+</html>

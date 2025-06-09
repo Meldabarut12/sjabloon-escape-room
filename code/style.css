@@ -9,6 +9,20 @@ body {
   align-items: center;
   height: 100vh;
   flex-direction: column;
+  background-image: url('middeleeuwse kasteel.jpg');
+  background-size: 70%; 
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+body {
+  /* ...andere CSS... */
+  background-image: url('cel.webp');
+  background-size: 70%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 .screen {
@@ -19,7 +33,7 @@ body {
   border-radius: 15px;
   max-width: 500px;
 }
-
+ 
 button {
   background-color: #d4af37;
   color: #000;
@@ -31,11 +45,11 @@ button {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
-
+ 
 button:hover {
   background-color: #b89c2c;
 }
-
+ 
 .controls {
   margin-top: 30px;
 }
