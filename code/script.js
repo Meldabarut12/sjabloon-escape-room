@@ -69,20 +69,12 @@ function finishScreen() {
   finishDiv.style.textAlign = "center";
   finishDiv.style.color = "#222";
 
-  // Check op welke kamer je bent
-  if (window.location.pathname.includes('room_1.php')) {
-    finishDiv.innerHTML = `<h2>Gefeliciteerd!</h2><p>Je bent gepromoveerd naar kamer 2.<br>Je wordt doorgestuurd...</p>`;
-    document.body.appendChild(finishDiv);
-    setTimeout(() => {
-      window.location.href = "room_2.php";
-    }, 3000);
-  } else if (window.location.pathname.includes('room_2.php')) {
-    finishDiv.innerHTML = `<h2>Gefeliciteerd!</h2><p>Je hebt kamer 2 uitgespeeld.<br>Je wordt doorgestuurd...</p>`;
-    document.body.appendChild(finishDiv);
-    setTimeout(() => {
-      window.location.href = "win.php";
-    }, 3000);
-  }
+  finishDiv.innerHTML = `<h2>Gefeliciteerd!</h2><p>Je hebt alle vragen correct beantwoord!<br>Je wordt doorgestuurd naar de overwinning...</p>`;
+  document.body.appendChild(finishDiv);
+
+  setTimeout(() => {
+    window.location.href = "win.php";
+  }, 3000);
 }
 
 // Functie die wordt aangeroepen als de tijd op is
@@ -98,6 +90,7 @@ document.getElementById('answer').addEventListener('keydown', function(e) {
   }
 });
 
+// Naam opslaan bij het starten
 document.getElementById('naamForm').addEventListener('submit', function() {
   localStorage.setItem('starttijd', Date.now());
 });

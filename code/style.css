@@ -1,3 +1,4 @@
+/*
 body {
   margin: 0;
   padding: 0;
@@ -9,21 +10,12 @@ body {
   align-items: center;
   height: 100vh;
   flex-direction: column;
-  background-image: url('middeleeuwse kasteel.jpg');
   background-size: 70%; 
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
 
-body {
-  /* ...andere CSS... */
-  background-image: url('cel.webp');
-  background-size: 70%;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-}
 
 .screen {
   text-align: center;
@@ -45,11 +37,68 @@ button {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
- 
+ /*
 button:hover {
   background-color: #b89c2c;
 }
+  
  
 .controls {
   margin-top: 30px;
 }
+*/
+/* kamer css */
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 30px;
+      color: rgb(0, 0, 0);
+    }
+    #vraag-container {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      background-color: rgb(161, 158, 159);
+      width: 70%;
+      margin-left: auto;
+      margin-right: auto;
+      display: none;
+    }
+    button {
+      padding: 6px 12px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    #feedback {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .highlight {
+      position: absolute;
+      background: rgba(255, 215, 0, 0.4);
+      pointer-events: none;
+      border: 2px solid orange;
+      z-index: 10;
+      display: none;
+    }
+    #img-container {
+      position: relative;
+      display: inline-block;
+    }
+    .optie-label {
+      display: block;
+      margin: 6px 0;
+      cursor: pointer;
+    }
+  .backgroundimg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.5;
+    
+  }
+
+  

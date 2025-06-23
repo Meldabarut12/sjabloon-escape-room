@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>PHP Gereedschap Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 30px;
+    }
+    #vraag-container {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+      width: 70%;
+      margin-left: auto;
+      margin-right: auto;
+      display: none;
+    }
+    button {
+      padding: 6px 12px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    #feedback {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .highlight {
+      position: absolute;
+      background: rgba(255, 215, 0, 0.4);
+      pointer-events: none;
+      border: 2px solid orange;
+      z-index: 10;
+      display: none;
+    }
+    #img-container {
+      position: relative;
+      display: inline-block;
+    }
+    .optie-label {
+      display: block;
+      margin: 6px 0;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Escape room TCR</h1>
+  <p>Klik op een gereedschap om een vraag te beantwoorden!</p>
+
+  <div id="img-container">
+    <img id="tools-img" src="tools.jpg" usemap="#toolsmap" alt="Gereedschap afbeelding">
+    <div id="highlight" class="highlight"></div>
+  </div>
+
+  <map name="toolsmap">
+    <area shape="rect" coords="30,25,320,450" alt="Hamer" data-index="1" onclick="toonVraag(1)" href="javascript:void(0);">
+    <area shape="rect" coords="370,25,500,430" alt="Schroevendraaier" data-index="2" onclick="toonVraag(2)" href="javascript:void(0);">
+    <area shape="rect" coords="570,25,730,430" alt="Steeksleutel" data-index="3" onclick="toonVraag(3)" href="javascript:void(0);">
+    <area shape="rect" coords="755,20,970,445" alt="Tang" data-index="4" onclick="toonVraag(4)" href="javascript:void(0);">
+  </map>
+
+  <!-- Quizvraag en antwoordveld -->
+  <div id="vraag-container">
+    <div id="vraagtekst"></div>
+    <form id="mc-form" style="display:none;"></form>
+    <input type="text" id="antwoord" placeholder="Typ je antwoord hier..." style="display:none;">
+    <br>
+    <button onclick="verwerkAntwoord()">Controleer</button>
+    <div id="feedback"></div>
+  </div>
+
+  <script>
+    // Quizvragen: type = 'open' of 'mc' (meerkeuze)
+    const vragen = {
+      1: {
+        type: "mc",
+        tekst: "🛠️ Welke PHP-functie gebruik je om een string te splitsen in een array?",
+        opties: ["implode", "explode", "split", "join"],
+        correct: "explode"
+      },
+      2: {
+        type: "mc",
+        tekst: "🔩 Wat is de output van: <code>echo strlen('gereedschap');</code>?",
+        opties: ["10", "11", "12", "13"],
+        correct: "11"
+      },
+      3: {
+        type: "open",
+        tekst: "🔧 Je hebt print en ....?",
+        correct: "echo"
+      },
+      4: {
+        type: "mc",
+        tekst: "🔨 Ja of Nee: kan een array meerdere waarden hebben?",
+        opties: ["Ja", "Nee"],
+        correct: "Ja"
+      }
+    };
+
+    let huidigeVraag = null;
+
+    // Toon de juiste vraag en het juiste invoerveld
+    function toonVraag(nr) {
+      huidigeVraag = nr;
+      document.getElementById("vraagtekst").innerHTML = vragen[nr].tekst;
+      document.getElementById("feedback").innerText = "";
+
+      // Toon meerkeuze of open vraag
+      if (vragen[nr].type === "mc") {
+        document.getElementById("mc-form").style.display = "block";
+        document.getElementById("antwoord").style.display = "none";
+        // Genereer radiobuttons
+        let optiesHtml = "";
+        vragen[nr].opties.forEach((optie, i) => {
+          optiesHtml += `<label class="optie-label"><input type="radio" name="optie" value="${optie}"> ${optie}</label>`;
+        });
+        document.getElementById("mc-form").innerHTML = optiesHtml;
+      } else {
+        document.getElementById("mc-form").style.display = "none";
+        document.getElementById("antwoord").style.display = "inline-block";
+        document.getElementById("antwoord").value = "";
+      }
+
+      document.getElementById("vraag-container").style.display = "block";
+    }
+
+    // Controleer het antwoord
+    function verwerkAntwoord() {
+      let gegevenAntwoord = "";
+      if (vragen[huidigeVraag].type === "mc") {
+        // Zoek de geselecteerde radiobutton
+        const gekozen = document.querySelector('input[name="optie"]:checked');
+        if (gekozen) {
+          gegevenAntwoord = gekozen.value.trim();
+        }
+      } else {
+        gegevenAntwoord = document.getElementById("antwoord").value.trim();
+      }
+
+      if (gegevenAntwoord === "") {
+        document.getElementById("feedback").innerText = "⚠️ Kies of typ eerst een antwoord!";
+        return;
+      }
+
+      // Vergelijk antwoord (case-insensitive)
+      if (gegevenAntwoord.toLowerCase() === vragen[huidigeVraag].correct.toLowerCase()) {
+        document.getElementById("feedback").innerText = "✅ Goed gedaan!";
+      } else {
+        document.getElementById("feedback").innerText = "❌ Niet helemaal goed. Probeer het nog eens!";
+      }
+    }
+
+    // Highlight functionaliteit voor de klikbare gebieden
+    const gebieden = [
+      {coords: [30,25,320,450]},    // Hamer
+      {coords: [370,25,500,430]},   // Schroevendraaier
+      {coords: [570,25,730,430]},   // Steeksleutel
+      {coords: [755,20,970,445]}    // Tang
+    ];
+
+    document.querySelectorAll('area').forEach((area, idx) => {
+      area.addEventListener('mouseover', function() {
+        const highlight = document.getElementById('highlight');
+        const coords = gebieden[idx].coords;
+        highlight.style.left = coords[0] + "px";
+        highlight.style.top = coords[1] + "px";
+        highlight.style.width = (coords[2] - coords[0]) + "px";
+        highlight.style.height = (coords[3] - coords[1]) + "px";
+        highlight.style.display = "block";
+      });
+      area.addEventListener('mouseout', function() {
+        document.getElementById('highlight').style.display = "none";
+      });
+    });
+  </script>
+
+</body>
+</html>

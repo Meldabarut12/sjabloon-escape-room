@@ -1,3 +1,49 @@
+<?php
+session_start();
+
+// Leaderboard-bestand
+$leaderboard_file = 'leaderboard.txt';
+
+// Reset elke 10 minuten
+$reset_interval = 600;
+if (file_exists($leaderboard_file)) {
+    if (time() - filemtime($leaderboard_file) > $reset_interval) {
+        file_put_contents($leaderboard_file, '');
+    }
+}
+
+// Verwerk invoer
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['naam']) && !empty($_POST['tijd'])) {
+    $naam = htmlspecialchars($_POST['naam']);
+    $tijd = htmlspecialchars($_POST['tijd']);
+    file_put_contents($leaderboard_file, "$naam - $tijd\n", FILE_APPEND);
+}
+
+// Lees leaderboard
+$leaderboard = file_exists($leaderboard_file) ? file($leaderboard_file, FILE_IGNORE_NEW_LINES) : [];
+
+// DATABASE-opslag
+if (isset($_SESSION['starttijd'])) {
+    $eindtijd = time();
+    $speeltijd = $eindtijd - $_SESSION['starttijd'];
+
+    // Vul je gegevens correct in
+    $conn = new mysqli("localhost", "root", "", "escaperoom2");
+    if ($conn->connect_error) {
+        die("Connectie mislukt: " . $conn->connect_error);
+    }
+
+    $naam = isset($_POST['naam']) ? $_POST['naam'] : 'Gast';
+    if ($stmt = $conn->prepare("INSERT INTO leaderboard (naam, tijd) VALUES (?, ?)")) {
+        $stmt->bind_param("si", $naam, $speeltijd);
+        $stmt->execute();
+        $stmt->close();
+    }
+    $conn->close();
+   // unset($_SESSION['starttijd']);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -18,18 +64,17 @@
     <h2>Leaderboard (reset elke 10 minuten)</h2>
     <ol>
       <?php foreach ($leaderboard as $entry): ?>
-        <li><?php echo $entry; ?></li>
+        <li><?php echo htmlspecialchars($entry); ?></li>
       <?php endforeach; ?>
     </ol>
     <button onclick="goHome()">Terug naar Start</button>
   </div>
- 
+
   <script>
     function goHome() {
       window.location.href = "index.php";
     }
 
-    // Bereken tijd en vul in bij het formulier
     document.addEventListener('DOMContentLoaded', function() {
       const starttijd = localStorage.getItem('starttijd');
       if (starttijd) {
@@ -43,26 +88,3 @@
   </script>
 </body>
 </html>
-
-<?php
-$leaderboard_file = 'leaderboard.txt';
-
-// Reset leaderboard elke 10 minuten (optioneel)
-$reset_interval = 600;
-if (file_exists($leaderboard_file)) {
-    $last_modified = filemtime($leaderboard_file);
-    if (time() - $last_modified > $reset_interval) {
-        file_put_contents($leaderboard_file, '');
-    }
-}
-
-// Verwerk naam en tijd
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['naam']) && !empty($_POST['tijd'])) {
-    $naam = htmlspecialchars($_POST['naam']);
-    $tijd = htmlspecialchars($_POST['tijd']);
-    file_put_contents($leaderboard_file, "$naam - $tijd\n", FILE_APPEND);
-}
-
-// Lees leaderboard
-$leaderboard = file_exists($leaderboard_file) ? file($leaderboard_file, FILE_IGNORE_NEW_LINES) : [];
-?>
